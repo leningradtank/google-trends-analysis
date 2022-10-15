@@ -1,0 +1,27 @@
+Machine learning is a branch of Artificial Intelligence (AI) and computer science that focuses on the use of data and algorithms to imitate the way humans learn, gradually improving its accuracy.1 Machine learning empowers traders to accelerate and automate one of the most complex, time-consuming, and challenging aspects of algorithmic trading, providing a competitive advantage beyond rules-based trading. 2
+
+There are several kinds of machine learning algorithms that exist today for a range of use cases. We will be focusing on Long Short-Term Memory (LSTM).
+
+LSTM is a special kind of recurrent neural network capable of handling long-term dependencies. These networks are capable of learning order dependence in sequence prediction problems.3 Financial time series prediction is one such problem where we can use LSTM to predict future prices of an asset. If you're interested in understanding how the network works, this article is a great resource.
+
+We're building a trading bot that uses a LSTM model to predict the closing price of ETH/USD on Alpaca. We'll use market data from Alpaca to train our model and use the predicted closing price from the trained model to make necessary trading decisions. To start, we can consider two scenarios:
+
+If we do not have a position and the current price of the asset is less than the predicted price of the asset at some time in the future. In this scenario, we place a BUY market order for a fixed quantity of the asset.
+If we do have a position and the current price of the asset is more than the predicted price of the asset at some time in the future. In this scenario we place a SELL market order for a fixed quantity of the asset.
+
+Before getting started, you need to create an Alpaca account to use paper trading as well as fetch market data for ETH/USD. You can get one by signing up here. Code for this trading bot can be found here. Now, let’s get started!
+
+Start by importing the necessary libraries including Alpaca-py, Tensorflow and Sci-kit Learn (Sklearn). Alpaca-py is the latest official python SDK from Alpaca. It gives us the necessary market data and trading endpoints. We enable logging to monitor the latest prices and bot status.
+
+Also, we define our trading client using Alpaca-py. It is currently set to using a paper environment. This can be easily set to use a live trading environment by setting the paper parameter as False.
+
+Next, define some trading variables that we will use to trade ETH/USD. This includes our trading pair ETH/USD, the quantity of ETH we would like to buy for each trade, our current position, current price of the asset and the predicted price of the asset.
+
+Let’s talk about what our main function does. It runs a never ending loop that predicts the price of our asset ETH/USD at a later point in time and makes trading decisions based on the predicted price, current price of the asset and position of the asset in our account.
+
+We start by creating an instance of class stockPred and call it pred. We then call the predictModel() method that returns the predicted price of ETH/USD at a later point in time.
+
+Once we have the predicted price, we call the function check_condition() that computes if a trade should be made. After waiting for a waitTime amount of seconds this process repeats again. We  have set the waitTime to 3600 seconds to wait for 1hr before we check for a trade again. This can be changed based on the timeframe of data you are looking at. Since we are considering an hourly timeframe and predicting the closing price of ETH/USD one hour into the future, it is reasonable to keep it at 3600 seconds.
+
+
+Next, let’s explore the class stockPred. While building this prediction class, I took inspiration from work found here. 4 It was of great help in creating this model and defining the necessary parameters. It has a few functions so we will look at them in snippets.
